@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Block admin panel from indexing
+Disallow: /admin/
+Disallow: /admin
+
+# Block API from indexing
+Disallow: /tag-api/
+
+Sitemap: https://theauctionguyza.co.za/sitemap.xml

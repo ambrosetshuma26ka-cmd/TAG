@@ -1,0 +1,272 @@
+@import "tailwindcss";
+
+@theme {
+  /* Strictly Brand Guidelines Palette */
+  --color-brand-dim: #696969;
+  --color-brand-medium: #808080;
+  --color-brand-grey: #A9A9A9;
+  --color-brand-silver: #C0C0C0;
+  --color-brand-light: #D3D3D3;
+  --color-brand-orange: #FF4500;
+  --color-brand-orange-hover: #E63F00;
+
+  /* Black for accents only */
+  --color-brand-black: #111111;
+
+  /* Typography */
+  --font-sans: "Aileron", sans-serif;
+  --font-heading: "Metanoai", serif;
+}
+
+@layer base {
+  /* ── Document defaults ──────────────────────────────────────────────── */
+  html {
+    /* Smooth scroll for wizard scroll-to-top behaviour */
+    scroll-behavior: smooth;
+    /* Prevent horizontal bleed from decorative oversized background text */
+    overflow-x: hidden;
+  }
+
+  body {
+    @apply bg-brand-dim text-white font-sans antialiased m-0 p-0;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading tracking-wide;
+  }
+
+  /* ── iOS Safari auto-zoom prevention ───────────────────────────────────
+   * Safari zooms in whenever a focused input / select / textarea has a
+   * computed font-size below 16 px.  Setting 16 px here globally is the
+   * safest catch-all; individual components also carry text-base so the
+   * rule is never overridden by a utility class lower than 16 px.
+   * ─────────────────────────────────────────────────────────────────── */
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+
+  /* ── Touch interaction improvements (iOS + Android) ────────────────────
+   * touch-action: manipulation  — removes the 300 ms tap delay on both
+   *   iOS Safari and Android Chrome / Samsung Internet without any JS lib.
+   * -webkit-tap-highlight-color — kills the blue/grey flash on tap that
+   *   appears in iOS Safari and older Android WebView.
+   * ─────────────────────────────────────────────────────────────────── */
+  button,
+  a,
+  input,
+  select,
+  textarea,
+  [role="button"] {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  /* ── Prevent content shifting when a modal / overlay locks scroll ───── */
+  body.scroll-locked {
+    overflow: hidden;
+    /* Keeps the page width stable so content doesn't jump when the
+       scrollbar disappears on desktop */
+    padding-right: var(--scrollbar-width, 0px);
+  }
+}
+
+@layer components {
+  /* ── Primary CTA button ─────────────────────────────────────────────── */
+  .btn-primary {
+    @apply relative inline-flex items-center justify-center
+           px-10 py-5
+           font-bold text-white
+           transition-all duration-300
+           bg-brand-orange border-2 border-brand-orange
+           overflow-hidden
+           shadow-[0_8px_24px_rgba(255,69,0,0.4)]
+           hover:shadow-[0_12px_32px_rgba(255,69,0,0.6)]
+           hover:-translate-y-1
+           hover:bg-brand-orange-hover
+           tracking-[0.15em] uppercase text-[13px]
+           /* Full-width on mobile, auto on sm+ — override per usage with
+              w-full sm:w-auto or w-full as needed */
+           touch-manipulation;
+  }
+
+  /* ── Outline / secondary button ────────────────────────────────────── */
+  .btn-outline {
+    @apply inline-flex items-center justify-center
+           px-10 py-5
+           font-bold text-brand-black
+           transition-all duration-300
+           border-[2px] border-brand-black
+           hover:border-brand-orange hover:text-brand-orange hover:bg-brand-black
+           bg-transparent
+           tracking-[0.15em] uppercase text-[13px]
+           hover:-translate-y-1
+           shadow-sm hover:shadow-md
+           touch-manipulation;
+  }
+
+  /* ── Shared form field label ────────────────────────────────────────── */
+  .field-label {
+    @apply block text-brand-grey font-black text-[11px] tracking-[0.25em] uppercase mb-3;
+  }
+
+  /* ── Shared text input / textarea base ─────────────────────────────── */
+  .field-input {
+    /* font-size must stay at or above 16 px to prevent iOS Safari zoom.
+       We use text-base here (1rem = 16 px by default) and never go lower. */
+    @apply w-full bg-brand-dim border-[2px] border-brand-medium
+           text-white font-bold text-base
+           px-4 py-3.5 sm:px-5 sm:py-4
+           placeholder-brand-grey
+           focus:outline-none focus:border-brand-orange
+           transition-colors duration-300
+           touch-manipulation;
+  }
+
+  /* ── Shared select base ─────────────────────────────────────────────── */
+  .field-select {
+    @apply w-full bg-brand-dim border-[2px] border-brand-medium
+           text-white font-bold text-base
+           px-4 py-3.5 sm:px-5 sm:py-4 pr-10
+           focus:outline-none focus:border-brand-orange
+           transition-colors duration-300
+           appearance-none cursor-pointer
+           touch-manipulation;
+    /* Custom dropdown arrow */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23FF4500' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+  }
+
+  /* ── Wizard / multi-step card ───────────────────────────────────────── */
+  .wizard-card {
+    @apply bg-[#111111] border-t-[5px] border-brand-orange
+           shadow-[0_30px_80px_rgba(0,0,0,0.5)];
+  }
+
+  /* Responsive inner padding: tight on mobile, generous on desktop */
+  .wizard-body {
+    @apply p-5 sm:p-10 md:p-14;
+  }
+
+  /* ── Wizard step navigation row ─────────────────────────────────────── */
+  .wizard-nav {
+    /* Stacks on mobile (primary action on top via flex-col-reverse),
+       horizontal on sm+ */
+    @apply flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between
+           gap-3 mt-10 sm:mt-12 pt-6 sm:pt-8 border-t border-[#696969];
+  }
+
+  /* Back button */
+  .wizard-back {
+    @apply w-full sm:w-auto px-8 py-4
+           border-[2px] border-[#696969] text-brand-grey
+           font-black text-[11px] tracking-[0.22em] uppercase
+           hover:border-brand-medium hover:text-white
+           transition-all duration-300
+           disabled:opacity-30 disabled:cursor-not-allowed
+           touch-manipulation;
+  }
+
+  /* ── Summary / review rows ──────────────────────────────────────────── */
+  .review-row {
+    /* flex-wrap lets long values (emails, service lists) wrap on narrow
+       screens rather than overflow */
+    @apply flex flex-wrap items-start gap-2
+           px-4 sm:px-8 py-3 sm:py-4;
+  }
+
+  .review-label {
+    @apply text-[#696969] font-black text-[11px] tracking-[0.2em] uppercase
+           w-[90px] sm:w-[110px] shrink-0 mt-[2px];
+  }
+
+  .review-value {
+    @apply text-white font-bold text-[13px] sm:text-[14px]
+           flex-1 min-w-0 break-words leading-[1.6];
+  }
+
+  /* ── Info / disclaimer banner ───────────────────────────────────────── */
+  .info-banner {
+    @apply flex items-start gap-4
+           bg-[#696969]/20 border-l-[4px] border-[#696969]
+           px-5 sm:px-7 py-5;
+  }
+
+  .info-banner-icon {
+    @apply text-brand-grey font-black text-[16px] shrink-0;
+  }
+
+  .info-banner-text {
+    @apply text-brand-grey font-bold text-[13px] leading-[1.75];
+  }
+
+  /* ── Stats bar item ─────────────────────────────────────────────────── */
+  .stat-item {
+    @apply py-5 sm:py-6 px-2 sm:px-4 text-center;
+  }
+
+  .stat-value {
+    @apply text-brand-orange font-heading font-black
+           text-[2rem] sm:text-[2.5rem] leading-none mb-2;
+  }
+
+  .stat-label {
+    @apply text-brand-grey font-black
+           text-[10px] sm:text-[11px]
+           tracking-[0.18em] sm:tracking-[0.22em] uppercase;
+  }
+
+  /* ── Success / confirmation card ────────────────────────────────────── */
+  .success-card {
+    @apply max-w-lg w-full bg-[#1a1a1a] border-t-[5px] border-brand-orange
+           p-8 sm:p-14 text-center shadow-2xl;
+  }
+
+  .success-icon {
+    @apply w-16 h-16 sm:w-20 sm:h-20
+           bg-brand-orange flex items-center justify-center
+           mx-auto mb-6 sm:mb-8;
+  }
+
+  /* ── Section hero ───────────────────────────────────────────────────── */
+  .page-hero {
+    @apply relative min-h-[55vh] flex items-end
+           pt-32 sm:pt-40 pb-16 sm:pb-20
+           bg-[#111111] overflow-hidden;
+  }
+
+  .hero-badge {
+    @apply inline-flex items-center gap-3
+           px-4 sm:px-5 py-2.5
+           mb-8 sm:mb-10
+           border-[2px] border-[#FF4500]/40 bg-[#FF4500]/10
+           text-brand-orange text-[11px] font-black
+           tracking-[0.28em] uppercase;
+  }
+
+  .hero-heading {
+    @apply text-4xl sm:text-5xl md:text-[5rem]
+           font-black font-heading uppercase
+           leading-[1.01] mb-6 sm:mb-8
+           text-white tracking-tight;
+  }
+
+  .hero-body {
+    @apply text-[15px] sm:text-[17px] text-brand-light
+           leading-[1.8] font-bold
+           border-l-[5px] border-brand-orange
+           pl-5 sm:pl-7 max-w-xl;
+  }
+
+  /* ── Scrollbar hide utility (used on stepper overflow-x-auto) ─────── */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}

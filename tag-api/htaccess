@@ -1,0 +1,38 @@
+Options -Indexes
+Options +FollowSymLinks
+
+php_flag  display_errors Off
+php_value error_reporting 0
+
+<IfModule mod_headers.c>
+    SetEnvIf Origin "^http://(localhost|127\.0\.0\.1)(:[0-9]+)?$" CORS_ORIGIN=$0
+    SetEnvIf Origin "^https://(www\.)?theauctionguyza\.co\.za$"   CORS_ORIGIN=$0
+
+    Header always set Access-Control-Allow-Origin      "%{CORS_ORIGIN}e" env=CORS_ORIGIN
+    Header always set Access-Control-Allow-Credentials "true"
+    Header always set Access-Control-Allow-Methods     "GET, POST, OPTIONS"
+    Header always set Access-Control-Allow-Headers     "Content-Type, X-Admin-Token"
+    Header always set Access-Control-Max-Age           "86400"
+
+    Header always set X-Content-Type-Options  "nosniff"
+    Header always set X-Frame-Options         "DENY"
+    Header always set Referrer-Policy         "strict-origin-when-cross-origin"
+    Header unset Server
+</IfModule>
+
+<FilesMatch "^(db|cors)\.php$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /tag-api/
+
+    RewriteCond %{REQUEST_METHOD} OPTIONS
+    RewriteRule ^ - [R=204,L]
+
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+</IfModule>
